@@ -61,7 +61,7 @@ exports.sign_up = function (req, res, next) {
                     email,
                     birthday: { day, month, year },
                     gender,
-                    joined: moment().format('MM Do YYYY'),
+                    joined_on: moment().format('MM Do YYYY'),
                     admin: true,
                 });
                 user.save()
