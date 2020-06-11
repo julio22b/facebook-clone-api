@@ -6,7 +6,7 @@ const PostSchema = new Schema({
     content: { type: String, required: true },
     image: String,
     timestamp: { type: String, required: true },
-    reactions: [{ type: String, enum: ['Like', 'Love', 'Care', 'Haha', 'Wow', 'Sad', 'Angry'] }],
+    reactions: [{ type: Schema.Types.ObjectId, ref: 'Reaction' }],
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
 });
 
