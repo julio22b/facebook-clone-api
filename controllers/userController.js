@@ -4,6 +4,17 @@ const moment = require('moment');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
+// GET AN USER'S INFO
+exports.get_one_user = function (req, res, next) {
+    User.findById(req.params.id)
+        .then((user) => {
+            res.status(200).json(user);
+        })
+        .catch((err) => {
+            next(err);
+        });
+};
+
 // USER LOG IN
 exports.log_in = function (req, res, next) {
     const { password, email } = req.body;
@@ -23,6 +34,7 @@ exports.log_in = function (req, res, next) {
                     return res.status(200).json({
                         token,
                         message: 'User authenticated',
+                        user_id: user._id,
                     });
                 } else {
                     return res.status(400).json({ message: 'Incorrect password' });

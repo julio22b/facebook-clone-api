@@ -4,6 +4,9 @@ const userController = require('../controllers/userController');
 const friendRequestController = require('../controllers/friendRequestController');
 const { check } = require('express-validator');
 
+// GET A USER'S INFO
+router.get('/:id', userController.get_one_user);
+
 // SEND FRIEND REQUEST
 const statusOpts = ['Accepted', 'Pending', 'Declined'];
 router.post(
@@ -18,7 +21,7 @@ router.post(
 );
 
 // ACCEPT FRIEND REQUEST
-router.post(
+router.put(
     '/friend-request/accept/:fromUserID/:toUserID',
     [
         check('status')
@@ -26,11 +29,11 @@ router.post(
             .trim()
             .escape(),
     ],
-    friendRequestController.post_accept_friend_request,
+    friendRequestController.put_accept_friend_request,
 );
 
 // DECLINE FRIEND REQUEST
-router.post(
+router.put(
     '/friend-request/decline/:fromUserID/:toUserID',
     [
         check('status')
@@ -38,7 +41,7 @@ router.post(
             .trim()
             .escape(),
     ],
-    friendRequestController.post_decline_friend_request,
+    friendRequestController.put_decline_friend_request,
 );
 
 router.post(
