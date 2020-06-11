@@ -3,6 +3,25 @@ var router = express.Router();
 const userController = require('../controllers/userController');
 const { check } = require('express-validator');
 
+const statusOpts = ['Accepted', 'Pending', 'Declined'];
+router.post(
+    '/friend-request/:fromUser/:toUser',
+    [check('pending').custom((val, { req }) => statusOpts.includes(val))],
+    userController.post_friend_request,
+);
+
+router.post(
+    '/log-in',
+    [
+        check('email', 'Email must be valid').isEmail().trim().escape(),
+        check('password', 'Password must be at least 8 characters long')
+            .isLength({ min: 8 })
+            .trim()
+            .escape(),
+    ],
+    userController.log_in,
+);
+
 router.post(
     '/sign-up',
     [
@@ -21,18 +40,6 @@ router.post(
         check('gender', 'Choose a gender').not().isEmpty().trim().escape(),
     ],
     userController.sign_up,
-);
-
-router.post(
-    '/log-in',
-    [
-        check('email', 'Email must be valid').isEmail().trim().escape(),
-        check('password', 'Password must be at least 8 characters long')
-            .isLength({ min: 8 })
-            .trim()
-            .escape(),
-    ],
-    userController.log_in,
 );
 
 module.exports = router;

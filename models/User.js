@@ -13,6 +13,7 @@ const UserSchema = new Schema({
     posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
     friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     friend_requests: [{ type: Schema.Types.ObjectId, ref: 'FriendRequest' }],
+    logged_in: Boolean,
     joined_on: String,
     admin: Boolean,
 });
