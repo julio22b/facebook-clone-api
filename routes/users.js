@@ -1,13 +1,44 @@
 var express = require('express');
 var router = express.Router();
 const userController = require('../controllers/userController');
+const friendRequestController = require('../controllers/friendRequestController');
 const { check } = require('express-validator');
 
+// SEND FRIEND REQUEST
 const statusOpts = ['Accepted', 'Pending', 'Declined'];
 router.post(
-    '/friend-request/:fromUser/:toUser',
-    [check('pending').custom((val, { req }) => statusOpts.includes(val))],
-    userController.post_friend_request,
+    '/friend-request/send/:fromUserID/:toUserID',
+    [
+        check('status')
+            .custom((val, { req }) => statusOpts.includes(val))
+            .trim()
+            .escape(),
+    ],
+    friendRequestController.post_friend_request,
+);
+
+// ACCEPT FRIEND REQUEST
+router.post(
+    '/friend-request/accept/:fromUserID/:toUserID',
+    [
+        check('status')
+            .custom((val, { req }) => statusOpts.includes(val))
+            .trim()
+            .escape(),
+    ],
+    friendRequestController.post_accept_friend_request,
+);
+
+// DECLINE FRIEND REQUEST
+router.post(
+    '/friend-request/decline/:fromUserID/:toUserID',
+    [
+        check('status')
+            .custom((val, { req }) => statusOpts.includes(val))
+            .trim()
+            .escape(),
+    ],
+    friendRequestController.post_decline_friend_request,
 );
 
 router.post(
