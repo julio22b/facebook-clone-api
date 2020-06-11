@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     password: { type: String, required: true },
     email: { type: String, required: true },
     birthday: { day: String, month: String, year: Number },
-    gender: { enum: ['Male', 'Female', 'Other'] },
+    gender: { type: String, enum: ['Male', 'Female', 'Other'] },
     profile_picture: String,
     bio: String,
     posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
