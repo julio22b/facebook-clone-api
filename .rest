@@ -1,13 +1,78 @@
-POST http://localhost:4000/users/sign-up HTTP/1.1
-Content-Type: : application/json
+PUT http://localhost:4000/posts/5ee2d1ae9aa0130c67666170/comment HTTP/1.1
+Content-Type: application/json
 
 {
-    "first_name": "h",
-    "last_name": "h",
-    "password": "321321211321",
-    "password_confirmation": "321321211321",
-    "email": "321321211321@hotmail.com",
+    "user_id": "5ee16b690b0c8609b6aa7613",
+    "content": "your post sucks"
+}
+
+PUT http://localhost:4000/posts/5ee2d1ae9aa0130c67666170/react HTTP/1.1
+content-type: application/json
+
+{
+    "user_id": "5ee248fb03ba2f05401ca7fa",
+    "reaction": "Wow"
+}
+
+GET http://localhost:4000/posts/5ee2d1ae9aa0130c67666170 HTTP/1.1
+
+
+POST http://localhost:4000/posts/create HTTP/1.1
+Content-Type: application/json
+
+{
+    "user_id": "5ee248fb03ba2f05401ca7fa",
+    "content": "my second post",
+    "image": "an image here"
+}
+
+
+PUT http://localhost:4000/users/friend-request/decline/5ee248fb03ba2f05401ca7fa/5ee2491603ba2f05401ca7fb HTTP/1.1
+content-type: application/json
+
+{
+    "status": "Declined"
+}
+
+PUT http://localhost:4000/users/friend-request/accept/5ee248fb03ba2f05401ca7fa/5ee2491603ba2f05401ca7fb HTTP/1.1
+content-type: application/json
+
+{
+    "status": "Accepted"
+}
+
+POST http://localhost:4000/users/friend-request/send/5ee248fb03ba2f05401ca7fa/5ee2491603ba2f05401ca7fb HTTP/1.1
+content-type: application/json
+
+{
+    "status": "Pending"
+}
+
+
+GET http://localhost:4000/users/5ee2491603ba2f05401ca7fb HTTP/1.1
+
+POST http://localhost:4000/users/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+    "first_name": "test3",
+    "last_name": "test3",
+    "password": "12345678",
+    "password_confirmation": "12345678",
+    "email": "test3@hotmail.com",
     "day": "20",
     "month": "June",
+    "year": "1995",
+    "gender": "Male"
+}
 
+
+
+
+POST http://localhost:4000/users/log-in HTTP/1.1
+content-type: application/json
+
+{
+    "email":"321321211321@hotmail.com",
+    "password": "321321211321"
 }
