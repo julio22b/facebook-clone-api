@@ -28,7 +28,7 @@ passport.use(
                 if (!user) {
                     return done(null, false);
                 } else {
-                    return done(null, doc);
+                    return done(null, user);
                 }
             });
         },

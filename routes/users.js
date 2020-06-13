@@ -3,9 +3,10 @@ var router = express.Router();
 const userController = require('../controllers/userController');
 const friendRequestController = require('../controllers/friendRequestController');
 const { check } = require('express-validator');
+const passport = require('passport');
 
 // GET A USER'S INFO
-router.get('/:id', userController.get_one_user);
+router.get('/:id', passport.authenticate('jwt', { session: false }), userController.get_one_user);
 
 // SEND FRIEND REQUEST
 const statusOpts = ['Accepted', 'Pending', 'Declined'];
@@ -17,6 +18,7 @@ router.post(
             .trim()
             .escape(),
     ],
+    passport.authenticate('jwt', { session: false }),
     friendRequestController.post_friend_request,
 );
 
@@ -29,6 +31,7 @@ router.put(
             .trim()
             .escape(),
     ],
+    passport.authenticate('jwt', { session: false }),
     friendRequestController.put_accept_friend_request,
 );
 
@@ -41,6 +44,7 @@ router.put(
             .trim()
             .escape(),
     ],
+    passport.authenticate('jwt', { session: false }),
     friendRequestController.put_decline_friend_request,
 );
 

@@ -1,3 +1,8 @@
+GET http://localhost:4000/users/5ee2491603ba2f05401ca7fb HTTP/1.1
+
+GET http://localhost:4000/posts/5ee2d1ae9aa0130c67666170 HTTP/1.1
+
+
 PUT http://localhost:4000/posts/5ee2d1ae9aa0130c67666170/comment HTTP/1.1
 Content-Type: application/json
 
@@ -14,7 +19,6 @@ content-type: application/json
     "reaction": "Wow"
 }
 
-GET http://localhost:4000/posts/5ee2d1ae9aa0130c67666170 HTTP/1.1
 
 
 POST http://localhost:4000/posts/create HTTP/1.1
@@ -49,7 +53,6 @@ content-type: application/json
 }
 
 
-GET http://localhost:4000/users/5ee2491603ba2f05401ca7fb HTTP/1.1
 
 POST http://localhost:4000/users/sign-up HTTP/1.1
 Content-Type: application/json

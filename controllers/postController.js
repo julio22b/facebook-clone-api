@@ -8,6 +8,15 @@ const { validationResult } = require('express-validator');
 // GET ALL POSTS, SORTED BY DATE
 exports.get_all_posts = function (req, res, next) {
     Post.find()
+        .populate('users reactions comments')
+        .populate({
+            path: 'reactions',
+            populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
+        })
+        .populate({
+            path: 'comments',
+            populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
+        })
         .then((posts) => {
             res.status(200).json(posts);
         })
@@ -70,7 +79,15 @@ exports.put_like_post = function (req, res, next) {
 // GETS A POST BY ID
 exports.get_one_post = function (req, res, next) {
     Post.findById(req.params.id)
-        .populate('user reactions comments')
+        .populate('user reactions comments', '-password')
+        .populate({
+            path: 'reactions',
+            populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
+        })
+        .populate({
+            path: 'comments',
+            populate: { path: 'user', model: 'User', select: 'first_name last_name' },
+        })
         .then((document) => {
             res.status(200).json(document);
         });

@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator');
 
 // GET AN USER'S INFO
 exports.get_one_user = function (req, res, next) {
-    User.findById(req.params.id)
+    User.findById(req.params.id, '-password')
         .then((user) => {
             res.status(200).json(user);
         })
@@ -18,6 +18,7 @@ exports.get_one_user = function (req, res, next) {
 // USER LOG IN
 exports.log_in = function (req, res, next) {
     const { password, email } = req.body;
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.errors });
