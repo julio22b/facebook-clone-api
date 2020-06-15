@@ -1,6 +1,11 @@
-GET http://localhost:4000/users/5ee2491603ba2f05401ca7fb HTTP/1.1
+GET http://localhost:4000/users/5ee2491603ba2f05401ca7fb/new-people HTTP/1.1
+
+GET http://localhost:4000/posts HTTP/1.1
 
 GET http://localhost:4000/posts/5ee2d1ae9aa0130c67666170 HTTP/1.1
+
+GET http://localhost:4000/users/5ee2491603ba2f05401ca7fb HTTP/1.1
+
 
 
 PUT http://localhost:4000/posts/5ee2d1ae9aa0130c67666170/comment HTTP/1.1

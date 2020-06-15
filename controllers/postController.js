@@ -8,14 +8,18 @@ const { validationResult } = require('express-validator');
 // GET ALL POSTS, SORTED BY DATE
 exports.get_all_posts = function (req, res, next) {
     Post.find()
-        .populate('users reactions comments')
+        .populate('user', 'first_name last_name profile_picture')
         .populate({
             path: 'reactions',
             populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
         })
         .populate({
             path: 'comments',
-            populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
+            populate: {
+                path: 'user',
+                model: 'User',
+                select: 'first_name last_name profile_picture',
+            },
         })
         .then((posts) => {
             res.status(200).json(posts);
@@ -26,8 +30,8 @@ exports.get_all_posts = function (req, res, next) {
 };
 
 // COMMENT A POST
-exports.post_comment_post = function (req, res, next) {
-    const { user_id, content, image } = req.body;
+exports.put_comment_post = function (req, res, next) {
+    const { user_id, content } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.errors });
@@ -38,12 +42,22 @@ exports.post_comment_post = function (req, res, next) {
         timestamp: moment().format('MM/DD/YYYY HH:mm'),
         post: req.params.id,
         edited: false,
-        image,
     });
     newComment
         .save()
         .then((comment) => {
-            res.status(200).json(comment);
+            Post.findByIdAndUpdate(
+                req.params.id,
+                { $push: { comments: newComment } },
+                { new: true },
+            ).then((post) => {
+                comment
+                    .populate('user', 'first_name last_name profile_picture')
+                    .execPopulate()
+                    .then((comment) => {
+                        res.status(200).json(comment);
+                    });
+            });
         })
         .catch((err) => {
             next(err);
@@ -61,25 +75,31 @@ exports.put_like_post = function (req, res, next) {
         type: reaction,
         reactor: user_id,
     });
-    newReaction.save().then((savedReaction) => {
-        Post.findByIdAndUpdate(
-            req.params.id,
-            { $push: { reactions: savedReaction } },
-            { new: true },
-        )
-            .then((updatedPost) => {
-                res.status(200).json({ updatedPost, message: 'Reacted' });
-            })
-            .catch((err) => {
-                next(err);
+    newReaction
+        .save()
+        .then((savedReaction) => {
+            Post.findByIdAndUpdate(
+                req.params.id,
+                { $push: { reactions: savedReaction } },
+                { new: true },
+            ).then((updatedPost) => {
+                savedReaction
+                    .populate('reactor', 'first_name last_name')
+                    .execPopulate()
+                    .then((reaction) => {
+                        res.status(200).json(reaction);
+                    });
             });
-    });
+        })
+        .catch((err) => {
+            next(err);
+        });
 };
 
 // GETS A POST BY ID
 exports.get_one_post = function (req, res, next) {
     Post.findById(req.params.id)
-        .populate('user reactions comments', '-password')
+        .populate('user', '-password')
         .populate({
             path: 'reactions',
             populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
@@ -107,6 +127,6 @@ exports.post_new_post = function (req, res, next) {
         timestamp: moment().format('HH:mm[,] MM/DD/YYYY'),
     });
     newPost.save().then((post) => {
-        res.status(200).json({ post, message: 'Post uploaded' });
+        res.status(200).json({ post, message: 'Post created' });
     });
 };

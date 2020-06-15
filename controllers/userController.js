@@ -15,6 +15,21 @@ exports.get_one_user = function (req, res, next) {
         });
 };
 
+// GET NEW PEOPLE FOR A USER TO FRIEND
+exports.get_new_users = function (req, res, next) {
+    User.findOne({ _id: req.params.id })
+        .then((user) => {
+            User.find({ _id: { $nin: user.friends } }, 'first_name last_name profile_picture')
+                .limit(5)
+                .then((people) => {
+                    res.status(200).json(people);
+                });
+        })
+        .catch((error) => {
+            next(error);
+        });
+};
+
 // USER LOG IN
 exports.log_in = function (req, res, next) {
     const { password, email } = req.body;
@@ -79,7 +94,7 @@ exports.sign_up = function (req, res, next) {
                 });
                 user.save()
                     .then((document) => {
-                        res.json(document);
+                        res.json({ message: 'Account created.' });
                     })
                     .catch((error) => next(error));
             });

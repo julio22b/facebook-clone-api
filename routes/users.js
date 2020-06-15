@@ -8,6 +8,13 @@ const passport = require('passport');
 // GET A USER'S INFO
 router.get('/:id', passport.authenticate('jwt', { session: false }), userController.get_one_user);
 
+// GETS 5 USERS THE LOGGED IN USER IS NOT FRIENDS WITH
+router.get(
+    '/:id/new-people',
+    passport.authenticate('jwt', { session: false }),
+    userController.get_new_users,
+);
+
 // SEND FRIEND REQUEST
 const statusOpts = ['Accepted', 'Pending', 'Declined'];
 router.post(
