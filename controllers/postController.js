@@ -29,6 +29,25 @@ exports.get_all_posts = function (req, res, next) {
         });
 };
 
+// GET ALL POSTS FROM ONE USER
+exports.get_user_posts = function (req, res, next) {
+    Post.find({ user: { $eq: req.params.id } })
+        .populate({
+            path: 'reactions',
+            populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
+        })
+        .populate({
+            path: 'comments',
+            populate: { path: 'user', model: 'User', select: 'first_name last_name' },
+        })
+        .then((posts) => {
+            res.status(200).json(posts);
+        })
+        .catch((err) => {
+            next(err);
+        });
+};
+
 // COMMENT A POST
 exports.put_comment_post = function (req, res, next) {
     const { user_id, content } = req.body;

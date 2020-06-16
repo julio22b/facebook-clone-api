@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const userController = require('../controllers/userController');
 const friendRequestController = require('../controllers/friendRequestController');
+const postController = require('../controllers/postController');
 const { check } = require('express-validator');
 const passport = require('passport');
 
@@ -13,6 +14,13 @@ router.get(
     '/:id/new-people',
     passport.authenticate('jwt', { session: false }),
     userController.get_new_users,
+);
+
+// GET THE CLIENT'S POSTS
+router.get(
+    '/:id/profile/posts',
+    passport.authenticate('jwt', { session: false }),
+    postController.get_user_posts,
 );
 
 // SEND FRIEND REQUEST
