@@ -16,41 +16,22 @@ router.get(
 );
 
 // SEND FRIEND REQUEST
-const statusOpts = ['Accepted', 'Pending', 'Declined'];
 router.post(
-    '/friend-request/send/:fromUserID/:toUserID',
-    [
-        check('status')
-            .custom((val, { req }) => statusOpts.includes(val))
-            .trim()
-            .escape(),
-    ],
+    '/friend-request/:fromUserID/send/:toUserID',
     passport.authenticate('jwt', { session: false }),
     friendRequestController.post_friend_request,
 );
 
 // ACCEPT FRIEND REQUEST
 router.put(
-    '/friend-request/accept/:fromUserID/:toUserID',
-    [
-        check('status')
-            .custom((val, { req }) => statusOpts.includes(val))
-            .trim()
-            .escape(),
-    ],
+    '/friend-request/:fromUserID/accept/:toUserID',
     passport.authenticate('jwt', { session: false }),
     friendRequestController.put_accept_friend_request,
 );
 
 // DECLINE FRIEND REQUEST
 router.put(
-    '/friend-request/decline/:fromUserID/:toUserID',
-    [
-        check('status')
-            .custom((val, { req }) => statusOpts.includes(val))
-            .trim()
-            .escape(),
-    ],
+    '/friend-request/:fromUserID/decline/:toUserID',
     passport.authenticate('jwt', { session: false }),
     friendRequestController.put_decline_friend_request,
 );
