@@ -33,12 +33,17 @@ exports.get_all_posts = function (req, res, next) {
 exports.get_user_posts = function (req, res, next) {
     Post.find({ user: { $eq: req.params.id } })
         .populate({
+            path: 'comments',
+            populate: {
+                path: 'user',
+                model: 'User',
+                select: 'first_name last_name profile_picture',
+            },
+        })
+        .populate('user', 'first_name last_name profile_picture')
+        .populate({
             path: 'reactions',
             populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
-        })
-        .populate({
-            path: 'comments',
-            populate: { path: 'user', model: 'User', select: 'first_name last_name' },
         })
         .then((posts) => {
             res.status(200).json(posts);

@@ -56,7 +56,7 @@ exports.post_friend_request = function (req, res, next) {
     newFR.save().then((sentFR) => {
         User.findByIdAndUpdate(toUserID, { $push: { friend_requests: sentFR } })
             .then((updatedUser) => {
-                res.status(200).json({ sentFR, message: 'Friend request sent.' });
+                res.status(200).json({ sentFR, message: 'Request sent' });
             })
             .catch((err) => {
                 next(err);

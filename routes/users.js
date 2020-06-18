@@ -23,6 +23,18 @@ router.get(
     postController.get_user_posts,
 );
 
+//UPDATE USER INFO
+router.put(
+    '/:id/profile',
+    passport.authenticate('jwt', { session: false }),
+    [
+        check('first_name', 'First name is required').isLength({ min: 1, max: 50 }).trim().escape(),
+        check('last_name', 'Last name is required').isLength({ min: 1, max: 50 }).trim().escape(),
+        check('bio', 'Bio must have up to 101 characters').trim().escape(),
+    ],
+    userController.update_user_info,
+);
+
 // SEND FRIEND REQUEST
 router.post(
     '/friend-request/:fromUserID/send/:toUserID',
