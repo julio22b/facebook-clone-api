@@ -50,7 +50,7 @@ router.put(
 );
 
 // DELETE POST
-router.delete('/:id', passport.authenticate('jwt', { session: false }, postController.delete_post));
+router.delete('/:id', passport.authenticate('jwt', { session: false }), postController.delete_post);
 
 // UPDATE POST
 router.put(

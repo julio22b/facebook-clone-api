@@ -150,9 +150,17 @@ exports.post_new_post = function (req, res, next) {
         image,
         timestamp: moment().format('HH:mm[,] MM/DD/YYYY'),
     });
-    newPost.save().then((post) => {
-        res.status(200).json({ post, message: 'Post created' });
-    });
+    newPost
+        .save()
+        .then((post) => {
+            newPost
+                .populate('user', 'first_name last_name profile_picture')
+                .execPopulate()
+                .then((populatedPost) => {
+                    res.status(200).json({ post, message: 'Post created' });
+                });
+        })
+        .catch((err) => next(err));
 };
 
 // DELETE A POST
