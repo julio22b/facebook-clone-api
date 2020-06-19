@@ -49,4 +49,15 @@ router.put(
     postController.put_comment_post,
 );
 
+// DELETE POST
+router.delete('/:id', passport.authenticate('jwt', { session: false }, postController.delete_post));
+
+// UPDATE POST
+router.put(
+    '/:id',
+    passport.authenticate('jwt', { session: false }),
+    [check('content', `Your post can't be empty`).not().isEmpty().trim().escape()],
+    postController.update_post,
+);
+
 module.exports = router;

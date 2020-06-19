@@ -154,3 +154,30 @@ exports.post_new_post = function (req, res, next) {
         res.status(200).json({ post, message: 'Post created' });
     });
 };
+
+// DELETE A POST
+exports.delete_post = function (req, res, next) {
+    Post.findByIdAndDelete(req.params.id)
+        .then((deletedPost) => {
+            res.status(200).json({ message: 'Post deleted' });
+        })
+        .catch((err) => {
+            next(err);
+        });
+};
+
+// UPDATE A POST
+exports.update_post = function (req, res, next) {
+    const { image, content } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json(errors.errors);
+    }
+    const updatedPost = {
+        image,
+        content,
+    };
+    Post.findByIdAndUpdate(req.params.id, updatedPost, { new: true }).then((update) => {
+        res.status(200).json({ message: 'Post updated', update });
+    });
+};
