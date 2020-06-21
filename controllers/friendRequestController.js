@@ -6,11 +6,7 @@ const moment = require('moment');
 // DECLINE A FRIEND REQUEST
 exports.put_decline_friend_request = function (req, res, next) {
     const { fromUserID, toUserID } = req.params;
-    FriendRequest.findOneAndUpdate(
-        { status: 'Pending', from: fromUserID, to: toUserID },
-        { status: 'Declined' },
-        { new: true },
-    )
+    FriendRequest.findOneAndDelete({ status: 'Pending', from: fromUserID, to: toUserID })
         .then((declinedReq) => {
             res.status(200).json({ message: 'Friend request declined.' });
         })

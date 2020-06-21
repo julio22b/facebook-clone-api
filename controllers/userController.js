@@ -36,13 +36,17 @@ exports.get_one_user = function (req, res, next) {
 
 // GET NEW PEOPLE FOR A USER TO FRIEND
 exports.get_new_users = function (req, res, next) {
+    const search = req.query.search || '';
     User.findOne({ _id: req.params.id }).then((user) => {
         FriendRequest.find({ $or: [{ from: user._id }, { to: user._id }] }).then((fr) => {
-            console.log(fr);
             User.find(
                 {
                     _id: { $nin: user.friends, $ne: user._id },
                     friend_requests: { $nin: fr },
+                    $or: [
+                        { first_name: new RegExp(search, 'i') },
+                        { last_name: new RegExp(search, 'i') },
+                    ],
                 },
                 'first_name last_name profile_picture',
             )
@@ -64,7 +68,6 @@ exports.get_new_users = function (req, res, next) {
                     },
                 })
                 .then((people) => {
-                    console.log(people);
                     res.status(200).json(people);
                 })
                 .catch((error) => {
@@ -75,7 +78,7 @@ exports.get_new_users = function (req, res, next) {
 };
 // UPDATE USER INFO
 exports.update_user_info = function (req, res, next) {
-    const { first_name, last_name, cover_photo, profile_photo, bio } = req.body;
+    const { first_name, last_name, cover_photo, profile_picture, bio } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json(errors.errors);
@@ -84,7 +87,7 @@ exports.update_user_info = function (req, res, next) {
         first_name,
         last_name,
         cover_photo,
-        profile_photo,
+        profile_picture,
         bio,
     };
     User.findByIdAndUpdate(req.params.id, updatedUser, { new: true })

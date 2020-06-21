@@ -5,28 +5,32 @@ const User = require('../models/User');
 const moment = require('moment');
 const { validationResult } = require('express-validator');
 
-// GET ALL POSTS, SORTED BY DATE
+// GET USER'S FRIENDS' POSTS, SORTED BY DATE USING THE POST _ID FIELD
 exports.get_all_posts = function (req, res, next) {
-    Post.find()
-        .populate('user', 'first_name last_name profile_picture')
-        .populate({
-            path: 'reactions',
-            populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
-        })
-        .populate({
-            path: 'comments',
-            populate: {
-                path: 'user',
-                model: 'User',
-                select: 'first_name last_name profile_picture',
-            },
-        })
-        .then((posts) => {
-            res.status(200).json(posts);
-        })
-        .catch((err) => {
-            next(err);
-        });
+    User.findOne({ _id: req.query.user }, 'friends').then((currentUser) => {
+        Post.find({ $or: [{ user: currentUser._id }, { user: { $in: currentUser.friends } }] })
+            .populate('user', 'first_name last_name profile_picture')
+            .populate({
+                path: 'reactions',
+                populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'user',
+                    model: 'User',
+                    select: 'first_name last_name profile_picture',
+                },
+            })
+            .sort({ _id: -1 })
+            .then((posts) => {
+                console.log(posts);
+                res.status(200).json(posts);
+            })
+            .catch((err) => {
+                next(err);
+            });
+    });
 };
 
 // GET ALL POSTS FROM ONE USER
