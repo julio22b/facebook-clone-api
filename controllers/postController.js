@@ -24,7 +24,6 @@ exports.get_all_posts = function (req, res, next) {
             })
             .sort({ _id: -1 })
             .then((posts) => {
-                console.log(posts);
                 res.status(200).json(posts);
             })
             .catch((err) => {

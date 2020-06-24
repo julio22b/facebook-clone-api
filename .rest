@@ -1,7 +1,7 @@
+GET http://localhost:4000/posts?user=5ee3f21716bfb611ac55f10a HTTP/1.1
 
 GET http://localhost:4000/users/5ee3f21716bfb611ac55f10a/new-people HTTP/1.1
 
-GET http://localhost:4000/posts HTTP/1.1
 
 GET http://localhost:4000/posts/5ee2d1ae9aa0130c67666170 HTTP/1.1
 
