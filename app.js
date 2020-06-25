@@ -7,7 +7,8 @@ const cors = require('cors');
 const passport = require('passport');
 const jwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const User = require('./models/User');
+/* const facebookStrategy = require('passport-facebook').Strategy;
+ */ const User = require('./models/User');
 const socket = require('socket.io');
 
 require('./mongoConfig');
@@ -36,13 +37,11 @@ io.on('connection', (socket) => {
         const userfrom = users.find((user) => user.currentUserID === data.from);
         console.log(data);
         if (user) {
-            socket.broadcast
-                .to(user.socket.id)
-                .emit('new_message', {
-                    id: data.to,
-                    message: data.message,
-                    chatIdentifier: data.chatIdentifier,
-                });
+            socket.broadcast.to(user.socket.id).emit('new_message', {
+                id: data.to,
+                message: data.message,
+                chatIdentifier: data.chatIdentifier,
+            });
             socket.broadcast.to(userfrom.socket.id).emit('new_message', {
                 id: data.to,
                 message: data.message,
@@ -55,6 +54,10 @@ io.on('connection', (socket) => {
                 chatIdentifier: data.chatIdentifier,
             });
         }
+    });
+
+    socket.on('new_post', (post) => {
+        socket.broadcast.emit('new_post', post);
     });
 
     socket.on('disconnect', () => {
@@ -83,6 +86,19 @@ passport.use(
         },
     ),
 );
+
+/* passport.use(
+    new facebookStrategy(
+        {
+            clientID: process.env.APP_ID,
+            clientSecret: process.env.APP_SECRET,
+            callbackURL: 'http://localhost:4000/users/auth/facebook',
+        },
+        function (accessToken, refreshToken, profile, done) {
+            console.log(accessToken, refreshToken, profile);
+        },
+    ),
+); */
 
 app.use(cors());
 app.use(passport.initialize());
