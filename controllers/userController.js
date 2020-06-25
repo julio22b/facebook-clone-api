@@ -76,6 +76,47 @@ exports.get_new_users = function (req, res, next) {
         });
     });
 };
+
+exports.search_people = function (req, res, next) {
+    const search = req.query.search || '';
+    User.findOne({ _id: req.params.id }).then((user) => {
+        FriendRequest.find({ $or: [{ from: user._id }, { to: user._id }] }).then((fr) => {
+            User.find(
+                {
+                    $or: [
+                        { first_name: new RegExp(search, 'i') },
+                        { last_name: new RegExp(search, 'i') },
+                    ],
+                },
+                'first_name last_name profile_picture',
+            )
+                .limit(Number(req.query.limit))
+                .populate({
+                    path: 'friend_requests',
+                    populate: {
+                        path: 'from',
+                        model: 'User',
+                        select: 'first_name last_name profile_picture',
+                    },
+                })
+                .populate({
+                    path: 'friend_requests',
+                    populate: {
+                        path: 'to',
+                        model: 'User',
+                        select: 'first_name last_name profile_picture',
+                    },
+                })
+                .then((people) => {
+                    res.status(200).json(people);
+                })
+                .catch((error) => {
+                    next(error);
+                });
+        });
+    });
+};
+
 // UPDATE USER INFO
 exports.update_user_info = function (req, res, next) {
     const { first_name, last_name, cover_photo, profile_picture, bio } = req.body;

@@ -16,6 +16,12 @@ router.get(
     userController.get_new_users,
 );
 
+router.get(
+    '/:id/search',
+    passport.authenticate('jwt', { session: false }),
+    userController.search_people,
+);
+
 // GET THE CLIENT'S POSTS
 router.get(
     '/:id/profile/posts',
