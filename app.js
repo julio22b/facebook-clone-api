@@ -34,13 +34,26 @@ io.on('connection', (socket) => {
     socket.on('send_message', (data) => {
         const user = users.find((user) => user.currentUserID === data.to);
         const userfrom = users.find((user) => user.currentUserID === data.from);
+        console.log(data);
         if (user) {
             socket.broadcast
                 .to(user.socket.id)
-                .emit('new_message', { id: data.to, message: data.message });
-            socket.broadcast
-                .to(userfrom.socket.id)
-                .emit('new_message', { id: data.to, message: data.message });
+                .emit('new_message', {
+                    id: data.to,
+                    message: data.message,
+                    chatIdentifier: data.chatIdentifier,
+                });
+            socket.broadcast.to(userfrom.socket.id).emit('new_message', {
+                id: data.to,
+                message: data.message,
+                chatIdentifier: data.chatIdentifier,
+            });
+        } else if (!user) {
+            socket.broadcast.to(userfrom.socket.id).emit('new_message', {
+                id: data.to,
+                message: 'User is not connected at the moment.',
+                chatIdentifier: data.chatIdentifier,
+            });
         }
     });
 
