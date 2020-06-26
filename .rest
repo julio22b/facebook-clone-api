@@ -1,3 +1,6 @@
+GET http://localhost:4000/users/log-in/facebook HTTP/1.1
+
+
 GET http://localhost:4000/posts?user=5ee3f21716bfb611ac55f10a HTTP/1.1
 
 GET http://localhost:4000/users/5ee3f21716bfb611ac55f10a/new-people HTTP/1.1

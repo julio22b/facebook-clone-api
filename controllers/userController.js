@@ -4,6 +4,13 @@ const moment = require('moment');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const FriendRequest = require('../models/FriendRequest');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    api_key: process.env.CLOUDINARY_API_KEY,
+});
 
 // GET AN USER'S INFO
 exports.get_one_user = function (req, res, next) {
@@ -124,20 +131,22 @@ exports.update_user_info = function (req, res, next) {
     if (!errors.isEmpty()) {
         return res.status(400).json(errors.errors);
     }
-    const updatedUser = {
-        first_name,
-        last_name,
-        cover_photo,
-        profile_picture,
-        bio,
-    };
-    User.findByIdAndUpdate(req.params.id, updatedUser, { new: true })
-        .then((user) => {
-            res.status(200).json({ message: 'Your profile has been updated' });
-        })
-        .catch((err) => {
-            next(err);
-        });
+    cloudinary.uploader.upload(profile_picture, {}, (err, result) => {
+        const updatedUser = {
+            first_name,
+            last_name,
+            cover_photo,
+            profile_picture: result.url,
+            bio,
+        };
+        User.findByIdAndUpdate(req.params.id, updatedUser, { new: true })
+            .then((user) => {
+                res.status(200).json({ message: 'Your profile has been updated' });
+            })
+            .catch((err) => {
+                next(err);
+            });
+    });
 };
 
 // USER LOG IN
@@ -170,6 +179,11 @@ exports.log_in = function (req, res, next) {
             next(err);
         });
 };
+
+/* //facebook auth
+exports.facebook_log_in = function (req, res, next) {
+    res.json({ message: 'hello facebook' });
+}; */
 
 // CREATE A NEW USER
 exports.sign_up = function (req, res, next) {

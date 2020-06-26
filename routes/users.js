@@ -74,6 +74,9 @@ router.post(
     userController.log_in,
 );
 
+//facebook log in
+/* router.get('/log-in/facebook', passport.authenticate('facebook'), userController.facebook_log_in); */
+
 router.post(
     '/sign-up',
     [
