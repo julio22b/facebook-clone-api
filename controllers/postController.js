@@ -48,6 +48,7 @@ exports.get_user_posts = function (req, res, next) {
             path: 'reactions',
             populate: { path: 'reactor', model: 'User', select: 'first_name last_name' },
         })
+        .sort({ _id: -1 })
         .then((posts) => {
             res.status(200).json(posts);
         })
@@ -179,13 +180,12 @@ exports.delete_post = function (req, res, next) {
 
 // UPDATE A POST
 exports.update_post = function (req, res, next) {
-    const { image, content } = req.body;
+    const { content } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json(errors.errors);
     }
     const updatedPost = {
-        image,
         content,
     };
     Post.findByIdAndUpdate(req.params.id, updatedPost, { new: true }).then((update) => {

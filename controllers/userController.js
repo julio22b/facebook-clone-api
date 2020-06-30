@@ -131,21 +131,23 @@ exports.update_user_info = function (req, res, next) {
     if (!errors.isEmpty()) {
         return res.status(400).json(errors.errors);
     }
-    cloudinary.uploader.upload(profile_picture, {}, (err, result) => {
-        const updatedUser = {
-            first_name,
-            last_name,
-            cover_photo,
-            profile_picture: result.url,
-            bio,
-        };
-        User.findByIdAndUpdate(req.params.id, updatedUser, { new: true })
-            .then((user) => {
-                res.status(200).json({ message: 'Your profile has been updated' });
-            })
-            .catch((err) => {
-                next(err);
-            });
+    cloudinary.uploader.upload(profile_picture, {}, (err, uploadedPP) => {
+        cloudinary.uploader.upload(cover_photo, {}, (err, uploadedCP) => {
+            const updatedUser = {
+                first_name,
+                last_name,
+                cover_photo: uploadedCP.url,
+                profile_picture: uploadedPP.url,
+                bio,
+            };
+            User.findByIdAndUpdate(req.params.id, updatedUser, { new: true })
+                .then((user) => {
+                    res.status(200).json({ message: 'Your profile has been updated' });
+                })
+                .catch((err) => {
+                    next(err);
+                });
+        });
     });
 };
 
@@ -198,7 +200,7 @@ exports.sign_up = function (req, res, next) {
     User.findOne({ email })
         .then((document) => {
             if (document) {
-                return res.json({ message: 'Email already exists' });
+                return res.status(400).json({ message: 'Email already exists' });
             }
 
             bcrypt.hash(password, 10, (err, hashedPassword) => {
@@ -212,13 +214,10 @@ exports.sign_up = function (req, res, next) {
                     birthday: { day, month, year },
                     gender,
                     joined_on: moment().format('MM Do YYYY'),
-                    admin: true,
                 });
-                user.save()
-                    .then((document) => {
-                        res.json({ message: 'Account created.' });
-                    })
-                    .catch((error) => next(error));
+                user.save().then((document) => {
+                    res.json({ message: 'Account created.' });
+                });
             });
         })
         .catch((err) => {
