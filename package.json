@@ -6,6 +6,9 @@
         "start": "node ./bin/www",
         "dev": "DEBUG=facebook-clone-api:* nodemon ./bin/www"
     },
+    "engines": {
+        "node": "12.16.x"
+    },
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "cloudinary": "^1.22.0",
