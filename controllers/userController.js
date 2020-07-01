@@ -34,6 +34,7 @@ exports.get_one_user = function (req, res, next) {
         })
         .populate('friends', 'first_name last_name profile_picture')
         .then((user) => {
+            console.log(user);
             res.status(200).json(user);
         })
         .catch((err) => {
