@@ -108,8 +108,8 @@ app.use(express.urlencoded({ extended: false, limit: '5mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.use('/posts', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/posts', indexRouter);
+app.use('/api/users', usersRouter);
 
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
